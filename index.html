@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHODAN ULTIMATE COCKPIT | QUANTA</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/996gkQh1/shodan-cockpit-favicon-1773650333830.png">
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-[#020202] text-[#e0e0e0] font-['Outfit'] h-screen overflow-hidden flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <nav
+        class="h-16 border-b border-white/5 bg-black/60 backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-[100]">
+        <div class="flex items-center gap-5">
+            <div class="w-16 h-16 group cursor-pointer overflow-hidden">
+                <img src="https://i.ibb.co.com/gL3K7myS/gpt-image-1-5-high-fidelity-a-A-premium-high-end.png"
+                    alt="Shodan Cockpit Logo"
+                    class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]">
+            </div>
+            <div>
+                <h1 class="text-base font-black tracking-[0.4em] uppercase text-white">Shodan<span
+                        class="text-red-600">Cockpit</span></h1>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black opacity-60">Elite Recon
+                    Framework | 0xN0X0N</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-8">
+            <div id="stats-summary"
+                class="hidden lg:flex items-center gap-6 text-[10px] uppercase tracking-[0.2em] font-black text-gray-400">
+                <div class="flex flex-col items-end">
+                    <span class="text-gray-600 text-[8px]">ACTIVE_TARGETS</span>
+                    <span id="stat-targets" class="text-white text-sm">00</span>
+                </div>
+                <div class="w-[1px] h-6 bg-white/5"></div>
+                <div class="flex flex-col items-end">
+                    <span class="text-gray-600 text-[8px]">TOTAL_FINDINGS</span>
+                    <span id="stat-results" class="text-red-600 text-sm font-mono">0000</span>
+                </div>
+            </div>
+            <button onclick="toggleSettings()"
+                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-red-600/20 hover:text-red-500 transition-all border border-white/5 shadow-inner group">
+                <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- Background Ambient Glow -->
+        <div class="absolute top-0 left-0 w-96 h-96 bg-red-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+        <div
+            class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-red-900/10 rounded-full blur-[200px] pointer-events-none">
+        </div>
+
+        <!-- Sidebar: Advanced Controls -->
+        <aside
+            class="w-80 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col shrink-0 relative z-10 shadow-2xl">
+            <!-- Scan Controls -->
+            <div class="p-8 space-y-6 border-b border-white/5">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[9px] uppercase font-black text-gray-500 tracking-[0.2em] pl-1">Target
+                            Identity</label>
+                        <span class="text-[8px] text-red-600 font-bold animate-pulse">READY_FOR_COMMUNICATIONS</span>
+                    </div>
+                    <input id="target" type="text" placeholder="tesla.com / org:Google"
+                        class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm focus:border-red-600 focus:ring-1 focus:ring-red-600/20 outline-none transition-all placeholder:text-gray-700 text-white font-mono">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <select id="type"
+                        class="bg-black/80 border border-white/10 rounded-xl px-3 py-4 text-[10px] text-gray-400 outline-none focus:border-white/20 appearance-none cursor-pointer">
+                        <option value="auto">AUTO_DETECT</option>
+                        <option value="domain">DOMAIN_SCOPE</option>
+                        <option value="org">ORGANIZATION</option>
+                        <option value="net">NETWORK_CIDR</option>
+                        <option value="query">GLOBAL_QUERY</option>
+                    </select>
+                    <button onclick="executeScan()" id="scan-btn"
+                        class="bg-red-600 hover:bg-neutral-100 hover:text-red-700 text-white hover:text-black font-black rounded-xl text-[10px] uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(220,38,38,0.2)] active:scale-95 group">
+                        <span class="group-hover:tracking-[0.15em] transition-all">Engage Audit</span>
+                    </button>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[9px] uppercase font-black text-gray-500 tracking-[0.2em] pl-1">Advanced Facet
+                        Probes</label>
+                    <input id="custom-facets" type="text" placeholder="asn, port, ssl.jarm, etc."
+                        class="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-[10px] focus:border-red-600 outline-none transition-all placeholder:text-gray-800 text-gray-400 font-mono">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="downloadReport('json')"
+                        class="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white rounded-xl py-3 text-[9px] uppercase font-black tracking-widest transition-all">
+                        JSON_EXPORT
+                    </button>
+                    <button onclick="downloadReport('csv')"
+                        class="bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white rounded-xl py-3 text-[9px] uppercase font-black tracking-widest transition-all">
+                        CSV_EXPORT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Log Feed -->
+            <div class="flex-1 overflow-hidden flex flex-col p-8">
+                <div class="flex justify-between items-end mb-6">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black uppercase text-white tracking-[0.2em]">Live Stream</span>
+                        <span class="text-[8px] text-gray-600 uppercase font-bold">Encrypted Telemetry</span>
+                    </div>
+                    <button onclick="clearLogs()"
+                        class="text-[9px] text-gray-600 hover:text-red-500 uppercase font-black transition-colors">Wipe_Logs</button>
+                </div>
+                <div id="console"
+                    class="flex-1 overflow-y-auto font-['JetBrains_Mono'] text-[9px] text-green-500/50 space-y-3 pr-2 scrollbar-none scroll-smooth">
+                    <div class="flex gap-2 text-gray-700">
+                        <span class="shrink-0">[SYS]</span>
+                        <span>Neural bridge established. Waiting for target input...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social/Contact Section -->
+            <div class="p-8 border-t border-white/5 space-y-4">
+                <span class="text-[8px] font-black text-gray-600 uppercase tracking-[0.3em]">Developer_Node</span>
+                <div class="flex flex-col gap-2">
+                    <a href="https://github.com/kazisabu" target="_blank"
+                        class="flex items-center gap-3 text-[10px] text-gray-500 hover:text-white transition-colors group">
+                        <svg class="w-4 h-4 opacity-40 group-hover:opacity-100" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                        </svg>
+                        kazisabu
+                    </a>
+                    <a href="https://kazisabbir.piratesofthedeadflag.com" target="_blank"
+                        class="flex items-center gap-3 text-[10px] text-gray-500 hover:text-white transition-colors group">
+                        <svg class="w-4 h-4 opacity-40 group-hover:opacity-100" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+                            </path>
+                        </svg>
+                        Portfolio
+                    </a>
+                    <a href="https://linkedin.com/in/kazixabbir1337" target="_blank"
+                        class="flex items-center gap-3 text-[10px] text-gray-500 hover:text-white transition-colors group">
+                        <svg class="w-4 h-4 opacity-40 group-hover:opacity-100" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-1.337-.025-3.052-1.86-3.052-1.86 0-2.145 1.453-2.145 2.956v5.7h-3v-11h2.88v1.503h.041c.401-.759 1.381-1.559 2.842-1.559 3.038 0 3.601 1.999 3.601 4.599v6.457z" />
+                        </svg>
+                        kazixabbir1337
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main View: Gold Standard Explorer -->
+        <main class="flex-1 flex flex-col overflow-hidden relative z-0">
+            <!-- Dynamic Facet Navigation -->
+            <div
+                class="h-16 border-b border-white/5 bg-black/40 backdrop-blur-md flex items-center px-8 shrink-0 facet-bar-container">
+                <div id="facet-tabs" class="flex items-center gap-4">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-gray-600 uppercase font-black tracking-[0.3em]">Standby</span>
+                        <span class="text-[8px] text-gray-800 font-bold">NO_ACTIVE_SESSION</span>
+                    </div>
+                </div>
+                <!-- Global Filter Input -->
+                <div class="ml-auto shrink-0 flex items-center gap-4">
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-600 group-focus-within:text-red-600 transition-colors">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input id="result-filter" oninput="filterResults()" type="text" placeholder="FILTER_STREAM"
+                            class="bg-black/50 border border-white/10 rounded-xl pl-10 pr-6 py-2.5 text-[10px] font-black tracking-widest outline-none focus:border-red-600 focus:ring-4 focus:ring-red-600/5 w-48 lg:w-64 transition-all text-white placeholder:text-gray-800">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area: The Gold Standard Grid -->
+            <div class="flex-1 overflow-y-auto p-10 relative scrollbar-none" id="results-stream">
+                <!-- Placeholder when no results -->
+                <div id="placeholder" class="h-full flex flex-col items-center justify-center">
+                    <div class="relative mb-8 group">
+                        <div
+                            class="absolute inset-0 bg-red-600/20 blur-[50px] group-hover:bg-red-600/40 transition-colors">
+                        </div>
+                        <svg class="w-32 h-32 text-red-600 relative opacity-40 group-hover:opacity-100 transition-all duration-700 transform group-hover:scale-110"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-center space-y-2 opacity-50">
+                        <h3 class="text-3xl font-black uppercase tracking-[0.8em] text-white">Shodan_Cockpit</h3>
+                        <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500 font-bold">Engage audit system
+                            via sidebar</p>
+                    </div>
+                </div>
+
+                <!-- The Actual Card Grid -->
+                <div id="cards-container" class="animate-fade-in"></div>
+
+                <!-- Bottom Spacing -->
+                <div class="h-32 pointer-events-none"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="settings-modal"
+        class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 backdrop-blur-2xl bg-black/80">
+        <div
+            class="glass max-w-lg w-full p-10 rounded-[2.5rem] border-t-4 border-red-600 space-y-8 shadow-[0_20px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-red-600/10 rounded-full blur-[80px]"></div>
+
+            <div class="flex justify-between items-start">
+                <div class="flex flex-col">
+                    <h3 class="text-2xl font-black uppercase text-white tracking-[0.2em]">Neural_Config</h3>
+                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Global Communication
+                        Parameters</span>
+                </div>
+                <button onclick="toggleSettings()"
+                    class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Discord Audit
+                        Webhook</label>
+                    <input id="pref-webhook" type="password" placeholder="EXFIL_CHANNEL_URL"
+                        class="w-full bg-black/60 border border-white/5 p-4 rounded-2xl text-xs text-red-500 font-mono tracking-widest outline-none focus:border-red-600/40 transition-all">
+                </div>
+                <div
+                    class="p-4 rounded-2xl bg-red-600/5 border border-red-600/10 text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
+                    Strategy: <span class="text-red-600">STEALTH_MODE</span> (Private Cloudflare Worker Active)
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Custom Relay
+                        Endpoint</label>
+                    <input id="pref-custom-proxy" type="text" placeholder="https://workers.dev/?url="
+                        class="w-full bg-black/60 border border-white/5 p-4 rounded-2xl text-xs text-blue-500 font-mono outline-none focus:border-blue-600/40 transition-all">
+                </div>
+                <div
+                    class="p-4 rounded-2xl bg-white/5 border border-white/5 text-[9px] text-gray-600 font-bold uppercase tracking-widest leading-relaxed">
+                    Notice: Local telemetry is stored in encrypted L-Storage. Credentials are never sent to external
+                    servers except specified relay.
+                </div>
+            </div>
+
+            <button onclick="saveSettings()"
+                class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase tracking-[0.3em] text-xs hover:bg-red-600 hover:text-white transition-all shadow-[0_10px_30px_rgba(255,255,255,0.1)] active:scale-95">Synchronize_Core</button>
+        </div>
+    </div>
+
+    <!-- Master Scripts -->
+    <script src="app.js"></script>
+</body>
+
+</html>
