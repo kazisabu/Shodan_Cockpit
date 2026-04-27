@@ -11,27 +11,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-[#020202] text-[#e0e0e0] font-['Outfit'] h-screen overflow-hidden flex flex-col">
 
     <!-- Top Navigation Bar -->
     <nav
-        class="h-16 border-b border-white/5 bg-black/60 backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-[100]">
-        <div class="flex items-center gap-5">
-            <div class="w-16 h-16 group cursor-pointer overflow-hidden">
+        class="h-16 border-b border-white/5 bg-black/60 backdrop-blur-2xl flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-[100]">
+        <div class="flex items-center gap-3 lg:gap-5">
+            <div class="w-10 h-10 lg:w-16 lg:h-16 group cursor-pointer overflow-hidden">
                 <img src="https://i.ibb.co.com/gL3K7myS/gpt-image-1-5-high-fidelity-a-A-premium-high-end.png"
                     alt="Shodan Cockpit Logo"
                     class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]">
             </div>
             <div>
-                <h1 class="text-base font-black tracking-[0.4em] uppercase text-white">Shodan<span
-                        class="text-red-600">Cockpit</span></h1>
-                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black opacity-60">Elite Recon
-                    Framework | 0xN0X0N</p>
+                <h1 class="text-xs lg:text-base font-black tracking-[0.2em] lg:tracking-[0.4em] uppercase text-white">
+                    Shodan<span class="text-red-600">Cockpit</span></h1>
+                <p class="text-[7px] lg:text-[9px] text-gray-500 uppercase tracking-widest font-black opacity-60">Elite
+                    Recon
+                    Framework</p>
             </div>
         </div>
-        <div class="flex items-center gap-8">
+        <div class="flex items-center gap-4">
             <div id="stats-summary"
                 class="hidden lg:flex items-center gap-6 text-[10px] uppercase tracking-[0.2em] font-black text-gray-400">
                 <div class="flex flex-col items-end">
@@ -44,12 +46,10 @@
                     <span id="stat-results" class="text-red-600 text-sm font-mono">0000</span>
                 </div>
             </div>
-            <button onclick="toggleSettings()"
-                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-red-600/20 hover:text-red-500 transition-all border border-white/5 shadow-inner group">
-                <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" fill="none"
-                    stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+            <button onclick="toggleSidebar()"
+                class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-red-600/10 text-red-500 border border-red-600/20 active:scale-95 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
                     </path>
                 </svg>
             </button>
@@ -64,15 +64,15 @@
         </div>
 
         <!-- Sidebar: Advanced Controls -->
-        <aside
-            class="w-80 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col shrink-0 relative z-10 shadow-2xl">
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 w-80 border-r border-white/5 bg-black/80 backdrop-blur-3xl flex flex-col shrink-0 z-[200] transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-500 ease-in-out shadow-2xl lg:bg-black/40 lg:backdrop-blur-xl">
             <!-- Scan Controls -->
             <div class="p-8 space-y-6 border-b border-white/5">
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label class="text-[9px] uppercase font-black text-gray-500 tracking-[0.2em] pl-1">Target
                             Identity</label>
-                        <span class="text-[8px] text-red-600 font-bold animate-pulse">READY_FOR_COMMUNICATIONS</span>
+                        <span class="text-[8px] text-red-600 font-bold animate-pulse">READY</span>
                     </div>
                     <input id="target" type="text" placeholder="tesla.com / org:Google"
                         class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm focus:border-red-600 focus:ring-1 focus:ring-red-600/20 outline-none transition-all placeholder:text-gray-700 text-white font-mono">
@@ -107,6 +107,16 @@
                         CSV_EXPORT
                     </button>
                 </div>
+                <!-- Scan Progress -->
+                <div class="space-y-3 pt-4 border-t border-white/5">
+                    <div class="flex justify-between items-center text-[8px] font-black uppercase tracking-widest">
+                        <span id="scan-progress-label" class="text-gray-500">SYSTEM_IDLE</span>
+                    </div>
+                    <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div id="scan-progress-bar"
+                            class="h-full w-0 bg-red-600 transition-all duration-500 shadow-[0_0_10px_#dc2626]"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Enhanced Log Feed -->
@@ -119,6 +129,9 @@
                     <button onclick="clearLogs()"
                         class="text-[9px] text-gray-600 hover:text-red-500 uppercase font-black transition-colors">Wipe_Logs</button>
                 </div>
+                <button onclick="wipeSession()"
+                    class="mb-4 w-full bg-white/5 hover:bg-red-600/10 border border-white/5 text-[8px] font-black uppercase py-2 rounded-lg transition-all">Wipe_Session_Cache</button>
+
                 <div id="console"
                     class="flex-1 overflow-y-auto font-['JetBrains_Mono'] text-[9px] text-green-500/50 space-y-3 pr-2 scrollbar-none scroll-smooth">
                     <div class="flex gap-2 text-gray-700">
@@ -173,9 +186,16 @@
                         <span class="text-[8px] text-gray-800 font-bold">NO_ACTIVE_SESSION</span>
                     </div>
                 </div>
-                <!-- Global Filter Input -->
+                <!-- Sort & Filter Controls -->
                 <div class="ml-auto shrink-0 flex items-center gap-4">
-                    <div class="relative group">
+                    <div class="hidden lg:flex items-center gap-2 mr-4 border-r border-white/5 pr-4">
+                        <button onclick="sortResults('hits')"
+                            class="text-[9px] font-black uppercase text-gray-500 hover:text-white transition-colors">SORT_BY_HITS</button>
+                        <span class="text-gray-800">/</span>
+                        <button onclick="sortResults('alpha')"
+                            class="text-[9px] font-black uppercase text-gray-500 hover:text-white transition-colors">SORT_A-Z</button>
+                    </div>
+                    <div class="relative group w-full lg:w-auto">
                         <div
                             class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-600 group-focus-within:text-red-600 transition-colors">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,13 +203,27 @@
                             </svg>
                         </div>
                         <input id="result-filter" oninput="filterResults()" type="text" placeholder="FILTER_STREAM"
-                            class="bg-black/50 border border-white/10 rounded-xl pl-10 pr-6 py-2.5 text-[10px] font-black tracking-widest outline-none focus:border-red-600 focus:ring-4 focus:ring-red-600/5 w-48 lg:w-64 transition-all text-white placeholder:text-gray-800">
+                            class="bg-black/50 border border-white/10 rounded-xl pl-10 pr-6 py-2.5 text-[10px] font-black tracking-widest outline-none focus:border-red-600 focus:ring-4 focus:ring-red-600/5 w-full lg:w-64 transition-all text-white placeholder:text-gray-800">
                     </div>
                 </div>
             </div>
 
             <!-- Content Area: The Gold Standard Grid -->
             <div class="flex-1 overflow-y-auto p-10 relative scrollbar-none" id="results-stream">
+                <!-- Data Insight Chart -->
+                <div id="chart-section"
+                    class="hidden mb-12 glass rounded-3xl p-8 border border-white/5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4">
+                        <button onclick="toggleChart()"
+                            class="text-[8px] font-black uppercase text-gray-600 hover:text-white transition-colors">Hide_Visualizer</button>
+                    </div>
+                    <h4 class="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] mb-6">
+                        Distribution_Analysis</h4>
+                    <div class="h-64 w-full">
+                        <canvas id="facetChart"></canvas>
+                    </div>
+                </div>
+
                 <!-- Placeholder when no results -->
                 <div id="placeholder" class="h-full flex flex-col items-center justify-center">
                     <div class="relative mb-8 group">
@@ -218,53 +252,28 @@
         </main>
     </div>
 
-    <!-- Modals -->
-    <div id="settings-modal"
-        class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 backdrop-blur-2xl bg-black/80">
-        <div
-            class="glass max-w-lg w-full p-10 rounded-[2.5rem] border-t-4 border-red-600 space-y-8 shadow-[0_20px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-64 h-64 bg-red-600/10 rounded-full blur-[80px]"></div>
+    </div>
 
-            <div class="flex justify-between items-start">
-                <div class="flex flex-col">
-                    <h3 class="text-2xl font-black uppercase text-white tracking-[0.2em]">Neural_Config</h3>
-                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Global Communication
-                        Parameters</span>
-                </div>
-                <button onclick="toggleSettings()"
-                    class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
+
+    <!-- Wipe Confirmation Modal -->
+    <div id="wipe-modal"
+        class="fixed inset-0 z-[2000] hidden flex items-center justify-center p-6 backdrop-blur-2xl bg-black/80">
+        <div class="glass max-w-sm w-full p-8 rounded-[2rem] border border-red-600/50 space-y-6 text-center">
+            <div class="w-16 h-16 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
             </div>
-
-            <div class="space-y-6">
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Discord Audit
-                        Webhook</label>
-                    <input id="pref-webhook" type="password" placeholder="EXFIL_CHANNEL_URL"
-                        class="w-full bg-black/60 border border-white/5 p-4 rounded-2xl text-xs text-red-500 font-mono tracking-widest outline-none focus:border-red-600/40 transition-all">
-                </div>
-                <div
-                    class="p-4 rounded-2xl bg-red-600/5 border border-red-600/10 text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">
-                    Strategy: <span class="text-red-600">STEALTH_MODE</span> (Private Cloudflare Worker Active)
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Custom Relay
-                        Endpoint</label>
-                    <input id="pref-custom-proxy" type="text" placeholder="https://workers.dev/?url="
-                        class="w-full bg-black/60 border border-white/5 p-4 rounded-2xl text-xs text-blue-500 font-mono outline-none focus:border-blue-600/40 transition-all">
-                </div>
-                <div
-                    class="p-4 rounded-2xl bg-white/5 border border-white/5 text-[9px] text-gray-600 font-bold uppercase tracking-widest leading-relaxed">
-                    Notice: Local telemetry is stored in encrypted L-Storage. Credentials are never sent to external
-                    servers except specified relay.
-                </div>
+            <h3 class="text-xl font-black uppercase tracking-widest text-white">Neural_Purge</h3>
+            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest leading-relaxed">Confirm deletion of
+                all cached findings? This action is irreversible.</p>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="toggleWipeModal()"
+                    class="py-4 rounded-xl bg-white/5 text-[9px] font-black uppercase text-gray-500 hover:text-white transition-all">Cancel</button>
+                <button onclick="wipeSession(true)"
+                    class="py-4 rounded-xl bg-red-600 text-[9px] font-black uppercase text-white hover:bg-neutral-100 hover:text-red-600 transition-all">Confirm</button>
             </div>
-
-            <button onclick="saveSettings()"
-                class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase tracking-[0.3em] text-xs hover:bg-red-600 hover:text-white transition-all shadow-[0_10px_30px_rgba(255,255,255,0.1)] active:scale-95">Synchronize_Core</button>
         </div>
     </div>
 
